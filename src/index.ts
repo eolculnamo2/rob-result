@@ -4,7 +4,7 @@ type OkType<T> = { type: typeof OK, data: T };
 type ErrType<T = undefined> = { type: typeof ERR, data?: T };
 
 export type Result<Ok, Err> = OkType<Ok> | ErrType<Err>;
-export type AsyncResult<Ok, Err> = Promise<Result<Ok,Err>>;
+export type AsyncResult<Ok, Err> = Promise<Result<Ok,Err>>
 
 // type constructors
 export const Ok = <T>(data: T): OkType<T> => ({ type: OK, data });
@@ -27,5 +27,22 @@ export const map = <Ok, Err, T>(result: Result<Ok, Err>, callback: (value: Ok) =
     return Ok(callback(result.data));
   }
   return Err(result);
+}
+
+export function match<Ok,Err>(result: Result<Ok, Err>) {
+  return {
+    ifOk(callback: (value: Ok) => void) {
+      if (isOk(result)) {
+        callback(result.data);
+      }
+      return this;
+    },
+    ifErr(callback: (value?: Err) => void) {
+      if (isErr(result)) {
+        callback(result.data);
+      }
+      return this;
+    }
+  }
 }
 
