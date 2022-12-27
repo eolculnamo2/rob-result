@@ -29,20 +29,15 @@ export const map = <Ok, Err, T>(result: Result<Ok, Err>, callback: (value: Ok) =
   return Err(result);
 }
 
-export function match<Ok,Err>(result: Result<Ok, Err>) {
-  return {
-    ifOk(callback: (value: Ok) => void) {
-      if (isOk(result)) {
-        callback(result.data);
-      }
-      return this;
-    },
-    ifErr(callback: (value?: Err) => void) {
-      if (isErr(result)) {
-        callback(result.data);
-      }
-      return this;
-    }
+export const match = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
+  result:  Result<Ok, Err>;
+  ifOk: (value: Ok) => OkReturn;
+  ifErr: (value?: Err) => ErrReturn;
+}) => {
+  const { result, ifOk, ifErr } = matchOptions;
+  if (isOk(result)) {
+    return ifOk(result.data);
   }
+  return ifErr(result.data);
 }
 
