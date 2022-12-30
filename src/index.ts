@@ -29,7 +29,7 @@ export const map = <Ok, Err, T>(result: Result<Ok, Err>, callback: (value: Ok) =
   return Err(result);
 }
 
-export const match = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
+export const flatMatch = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
   result: Result<Ok, Err>;
   ifOk: (value: Ok) => OkReturn;
   ifErr: (value?: Err) => ErrReturn;
@@ -39,6 +39,18 @@ export const match = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
     return Ok(ifOk(result.data));
   }
   return Err(ifErr(result.data));
+}
+
+export const match = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
+  result: Result<Ok, Err>;
+  ifOk: (value: Ok) => OkReturn;
+  ifErr: (value?: Err) => ErrReturn;
+}) => {
+  const { result, ifOk, ifErr } = matchOptions;
+  if (isOk(result)) {
+    return ifOk(result.data);
+  }
+  return ifErr(result.data);
 }
 
 // error occurs when returning AsyncResult instead of Promise<Result even though they should be the same.
