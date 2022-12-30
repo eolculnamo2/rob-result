@@ -4,7 +4,7 @@ type OkType<T> = { type: typeof OK, data: T };
 type ErrType<T = undefined> = { type: typeof ERR, data?: T };
 
 export type Result<Ok, Err> = OkType<Ok> | ErrType<Err>;
-export type AsyncResult<Ok, Err> = Promise<Result<Ok,Err>>
+export type AsyncResult<Ok, Err> = Promise<Result<Ok, Err>>;
 
 // type constructors
 export const Ok = <T>(data: T): OkType<T> => ({ type: OK, data });
@@ -30,14 +30,22 @@ export const map = <Ok, Err, T>(result: Result<Ok, Err>, callback: (value: Ok) =
 }
 
 export const match = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
-  result:  Result<Ok, Err>;
+  result: Result<Ok, Err>;
   ifOk: (value: Ok) => OkReturn;
   ifErr: (value?: Err) => ErrReturn;
 }) => {
   const { result, ifOk, ifErr } = matchOptions;
   if (isOk(result)) {
-    return ifOk(result.data);
+    return Ok(ifOk(result.data));
   }
-  return ifErr(result.data);
+  return Err(ifErr(result.data));
 }
 
+// error occurs when returning AsyncResult instead of Promise<Result even though they should be the same.
+export const attempt = async<Ok>(callback: () => Promise<Ok>): Promise<Result<Ok, unknown>> => {
+  try {
+    return Ok(await callback());
+  } catch (e) {
+    return Err(e);
+  }
+}
