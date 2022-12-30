@@ -14,6 +14,13 @@ export const Err = <T>(data?: T): ErrType<T> => ({ type: ERR, data });
 export const isErr = <Ok, Err>(result: Result<Ok, Err>): result is ErrType<Err> => result.type === ERR;
 export const isOk = <Ok, Err>(result: Result<Ok, Err>): result is OkType<Ok> => result.type === OK;
 
+export const map = <Ok, Err, T>(result: Result<Ok, Err>, callback: (value: Ok) => T) => {
+  if (isOk(result)) {
+    return Ok(callback(result.data));
+  }
+  return result;
+}
+
 // if is Ok, do callback which returns new Result, otherwise return error
 export const flatMap = <Ok, Err, T>(result: Result<Ok, Err>, callback: (value: Ok) => Result<T, Err>) => {
   if (isOk(result)) {
@@ -22,11 +29,16 @@ export const flatMap = <Ok, Err, T>(result: Result<Ok, Err>, callback: (value: O
   return result;
 }
 
-export const map = <Ok, Err, T>(result: Result<Ok, Err>, callback: (value: Ok) => T) => {
+export const match = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
+  result: Result<Ok, Err>;
+  ifOk: (value: Ok) => OkReturn;
+  ifErr: (value?: Err) => ErrReturn;
+}) => {
+  const { result, ifOk, ifErr } = matchOptions;
   if (isOk(result)) {
-    return Ok(callback(result.data));
+    return ifOk(result.data);
   }
-  return Err(result);
+  return ifErr(result.data);
 }
 
 export const flatMatch = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
@@ -41,17 +53,6 @@ export const flatMatch = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
   return Err(ifErr(result.data));
 }
 
-export const match = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
-  result: Result<Ok, Err>;
-  ifOk: (value: Ok) => OkReturn;
-  ifErr: (value?: Err) => ErrReturn;
-}) => {
-  const { result, ifOk, ifErr } = matchOptions;
-  if (isOk(result)) {
-    return ifOk(result.data);
-  }
-  return ifErr(result.data);
-}
 
 // error occurs when returning AsyncResult instead of Promise<Result even though they should be the same.
 export const attempt = <Ok, CbArgs extends any[]>(callback: (...args: CbArgs) => Promise<Ok>): (...args: CbArgs) => Promise<Result<Ok, unknown>> => {

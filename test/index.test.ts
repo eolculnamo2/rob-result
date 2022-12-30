@@ -1,4 +1,4 @@
-import { attempt, attemptSync, Err, isErr, isOk, flatMatch, Ok, Result, match } from '../src';
+import { attempt, attemptSync, Err, isErr, isOk, flatMatch, Ok, Result, match, map, flatMap } from '../src';
 
 // test utils
 
@@ -15,6 +15,33 @@ const unwrapErr = <Ok, Err>(result: Result<Ok, Err>) => {
   }
   return result.data;
 }
+
+describe('map', () => {
+  it('should return the mapped value correctly when ok', () => {
+    const value = Ok(5);
+    const outcome = map(value, (x) => x * 2);
+    const unwrappedOutcome = unwrapOk(outcome);
+    expect(unwrappedOutcome).toBe(10);
+  })
+  it('should return the same error when err', () => {
+    const value = Err(5);
+    const outcome = map(value, () => null);
+    expect(outcome).toStrictEqual(value);
+  })
+})
+
+describe('flatMap', () => {
+  it('should return the correctly mapped Ok value when ok', () => {
+    const value = Ok(5);
+    const outcome = flatMap(value, (x) => Ok(x * 2));
+    expect(outcome).toStrictEqual(Ok(10));
+  })
+  it('should return the same error when err', () => {
+    const value = Err(5);
+    const outcome = flatMap(value, () => Ok(null));
+    expect(outcome).toStrictEqual(value);
+  })
+})
 
 describe('match', () => {
   it('should match on Ok type', () => {
