@@ -42,10 +42,23 @@ export const match = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
 }
 
 // error occurs when returning AsyncResult instead of Promise<Result even though they should be the same.
-export const attempt = async<Ok>(callback: () => Promise<Ok>): Promise<Result<Ok, unknown>> => {
-  try {
-    return Ok(await callback());
-  } catch (e) {
-    return Err(e);
+export const attempt = <Ok, CbArgs extends any[]>(callback: (...args: CbArgs) => Promise<Ok>): (...args: CbArgs) => Promise<Result<Ok, unknown>> => {
+  return async (...args: CbArgs) => {
+    try {
+      return Ok(await callback(...args));
+    } catch (e) {
+      return Err(e);
+    }
   }
 }
+
+export const attemptSync = <Ok, CbArgs extends any[]>(callback: (...args: CbArgs) => Ok): (...args: CbArgs) => Result<Ok, unknown> => {
+  return (...args: CbArgs) => {
+    try {
+      return Ok(callback(...args));
+    } catch (e) {
+      return Err(e);
+    }
+  }
+}
+

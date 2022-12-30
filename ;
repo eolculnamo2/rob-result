@@ -1,4 +1,4 @@
-import { attempt, attemptSync, Err, isErr, isOk, match, Ok, Result } from '../src';
+import { attempt, Err, isErr, isOk, match, Ok, Result } from '../src';
 
 // test utils
 
@@ -58,28 +58,10 @@ describe('attempt', () => {
   })
 
   it('should return Err with error param from catch block', async () => {
-    const mockFailFn = jest.fn().mockRejectedValue('bar')
-    const outcome = attempt(mockFailFn);
-    const unwrappedOutcome = unwrapErr(await outcome());
-    expect(unwrappedOutcome).toBe('bar');
-  })
-})
-
-describe('attemptSync', () => {
-  it('should return Ok case with correct value when callback successful', async () => {
-    const outcome = attemptSync((a: number, b: number) => {
-      return a + b;
+    const outcome = attempt(async () => {
+      throw Error('bar');
     });
-    const unwrappedOutcome = unwrapOk(outcome(1, 2));
-    expect(unwrappedOutcome).toBe(3);
-  })
-
-  it('should return Err with error param from catch block', async () => {
-    const mockFailFn = jest.fn().mockImplementation(() => {
-      throw 'bar';
-    })
-    const outcome = attemptSync(mockFailFn);
-    const unwrappedOutcome = unwrapErr(outcome());
+    const unwrappedOutcome = unwrapErr(await outcome());
     expect(unwrappedOutcome).toBe('bar');
   })
 })
