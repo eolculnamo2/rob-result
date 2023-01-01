@@ -44,7 +44,7 @@ match({
 
 ## Features
 
-#### Result Type
+### Result Type
 ```
   type Result<Ok, Err> = OkType<Ok> | ErrType<Err>;
 ```
@@ -159,7 +159,7 @@ flatMatch example:
   })
   // x is a Result type instead of a union of values like in match
 ```
-flatMatch will likely be renamed. It's like match except it returns a Result
+flatMatch will likely be renamed (It's not really flattening anything). It's like match except it returns a Result.
 
 ### attempt
 attempt example:
