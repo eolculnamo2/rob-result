@@ -29,30 +29,27 @@ export const flatMap = <Ok, Err, T>(result: Result<Ok, Err>, callback: (value: O
   return result;
 }
 
-export const match = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
-  result: Result<Ok, Err>;
+export const match = <Ok, Err, OkReturn, ErrReturn>(result: Result<Ok, Err>, matchOptions: {
   ifOk: (value: Ok) => OkReturn;
   ifErr: (value?: Err) => ErrReturn;
 }) => {
-  const { result, ifOk, ifErr } = matchOptions;
+  const { ifOk, ifErr } = matchOptions;
   if (isOk(result)) {
     return ifOk(result.data);
   }
   return ifErr(result.data);
 }
 
-export const flatMatch = <Ok, Err, OkReturn, ErrReturn>(matchOptions: {
-  result: Result<Ok, Err>;
+export const flatMatch = <Ok, Err, OkReturn, ErrReturn>(result: Result<Ok, Err>, matchOptions: {
   ifOk: (value: Ok) => OkReturn;
   ifErr: (value?: Err) => ErrReturn;
 }) => {
-  const { result, ifOk, ifErr } = matchOptions;
+  const { ifOk, ifErr } = matchOptions;
   if (isOk(result)) {
     return Ok(ifOk(result.data));
   }
   return Err(ifErr(result.data));
 }
-
 
 // error occurs when returning AsyncResult instead of Promise<Result even though they should be the same.
 export const attempt = <Ok, CbArgs extends any[]>(callback: (...args: CbArgs) => Promise<Ok>): (...args: CbArgs) => Promise<Result<Ok, unknown>> => {

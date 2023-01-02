@@ -48,8 +48,7 @@ describe('match', () => {
     const okResult = Ok(5);
     const okFn = jest.fn().mockReturnValue(5);
     const errFn = jest.fn();
-    const returnValue = match({
-      result: okResult,
+    const returnValue = match(okResult, {
       ifOk: okFn,
       ifErr: errFn,
     })
@@ -59,11 +58,10 @@ describe('match', () => {
     expect(returnValue).toBe(5);
   })
   it('should match on Err type', () => {
-    const okResult = Err('Derp');
+    const errResult = Err('Derp');
     const okFn = jest.fn();
     const errFn = jest.fn().mockReturnValue('Derp');
-    const returnValue = match({
-      result: okResult,
+    const returnValue = match(errResult, {
       ifOk: okFn,
       ifErr: errFn,
     })
@@ -79,8 +77,7 @@ describe('flatMatch', () => {
     const okResult = Ok(5);
     const okFn = jest.fn().mockReturnValue(5);
     const errFn = jest.fn();
-    const returnValue = flatMatch({
-      result: okResult,
+    const returnValue = flatMatch(okResult, {
       ifOk: okFn,
       ifErr: errFn,
     })
@@ -91,11 +88,10 @@ describe('flatMatch', () => {
     expect(unwrappedReturn).toBe(5);
   })
   it('should flatMatch on Err type', () => {
-    const okResult = Err('Derp');
+    const errResult = Err('Derp');
     const okFn = jest.fn();
     const errFn = jest.fn().mockReturnValue('Derp');
-    const returnValue = flatMatch({
-      result: okResult,
+    const returnValue = flatMatch(errResult, {
       ifOk: okFn,
       ifErr: errFn,
     })

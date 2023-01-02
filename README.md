@@ -35,8 +35,7 @@ if (isErr(divideResult)) {
 }
 
 // can also use a match utility instead of if statements
-match({
-  result: divideResult,
+match(divideResult, {
   ifOk: (value) => console.log(`The answer is: ${divideResult.data}`),
   ifErr: (error) => console.log(`Divide Error: ${divideResult.data}`),
 })
@@ -141,8 +140,7 @@ a match function. match returns an unwrapped union of the Ok and Err types which
 Ok case and Err case both return JSX.
 ```
   const divideResult = [[Code from getting started example above]];
-  match({
-    result: divideResult,
+  match(divideResult, {
     ifOk: (value) => console.log(`The answer is: ${divideResult.data}`),
     ifErr: (error) => console.log(`Divide Error: ${divideResult.data}`),
   })
@@ -152,8 +150,7 @@ Ok case and Err case both return JSX.
 flatMatch example:
 ```
   const divideResult = [[Code from getting started example above]];
-  const x = flatMatch({
-    result: divideResult,
+  const x = flatMatch(divideResult, {
     ifOk: (value) => value
     ifErr: (error) => error,
   })
